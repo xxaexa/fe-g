@@ -11,22 +11,29 @@ const authOptions = {
         formData.append("username", credentials.username);
         formData.append("password", credentials.password);
 
-        const res = await fetch(url, {
-          method: "POST",
-          headers: { Accept: "application/json" },
-          body: formData,
-        });
+        try {
+          const res = await fetch(url, {
+            method: "POST",
+            headers: { Accept: "application/json" },
+            body: formData,
+          });
 
-        if (res.ok) {
+          console.log("Response status:", res.status);
           const userData = await res.json();
-          return {
-            refresh_token: userData.refresh,
-            access_token: userData.access,
-          };
-        }
+          console.log("User data received:", userData);
 
-        const errorData = await res.json();
-        throw new Error(errorData.detail || "Login failed"); // Ambil dari error.detail
+          if (res.ok) {
+            return {
+              refresh_token: userData.refresh,
+              access_token: userData.access,
+            };
+          }
+
+          throw new Error(userData.detail || "Login failed");
+        } catch (error) {
+          console.error("Error during authorization:", error);
+          throw new Error("Authorization error: " + error.message);
+        }
       },
     }),
   ],

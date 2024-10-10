@@ -14,17 +14,23 @@ const Login = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await signIn("credentials", {
-      username,
-      password,
-      redirect: false,
-      callbackUrl: "/",
-    });
+    try {
+      const res = await signIn("credentials", {
+        username,
+        password,
+        redirect: false,
+        callbackUrl: "/dashboard/users",
+      });
 
-    if (res?.error) {
-      alert(res.error);
-    } else {
-      router.push("/dashboard/users");
+      if (res?.error) {
+        alert(res.error);
+      } else {
+        router.push("/dashboard/users");
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+      alert("An unexpected error occurred. Please try again.");
+    } finally {
     }
   };
 
